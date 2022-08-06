@@ -61,8 +61,8 @@ export const authAPI = {
         return promise;
     },
     me() {
-       const promise =  instance.get<ResponseType<{id: number; email: string; login: string}>>('auth/me');
-       return promise
+        const promise =  instance.get<ResponseType<{id: number; email: string; login: string}>>('auth/me');
+        return promise
     }
 }
 

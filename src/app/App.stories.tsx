@@ -1,19 +1,15 @@
 import React from 'react'
-// @ts-ignore
-import {ComponentMeta, ComponentStory} from '@storybook/react';
+import {action} from '@storybook/addon-actions'
 import App from './App'
-import {BrowserRouterDecorator, ReduxStoreProviderDecorator} from '../stories/decorators/ReduxStoreProviderDecorator';
+import {BrowserRouterDecorator, ReduxStoreProviderDecorator} from '../stories/decorators/ReduxStoreProviderDecorator'
+import StoryRouter from 'storybook-react-router';
 
 export default {
     title: 'App Stories',
     component: App,
-    decorators: [ReduxStoreProviderDecorator, BrowserRouterDecorator],
-} as ComponentMeta<typeof  App>
+    decorators: [ReduxStoreProviderDecorator, BrowserRouterDecorator]
+}
 
-const Template: ComponentStory<typeof App> = () => <App demo={true}/>;
-
-export const AppBaseExample = Template.bind({});
-
-AppBaseExample.args = {
-    demo: true
-};
+export const AppBaseExample = (props: any) => {
+    return (<App demo={true} />)
+}
