@@ -5,7 +5,6 @@ import {useSelector} from 'react-redux'
 import {loginTC} from './auth-reducer'
 import {AppRootStateType, useAppDispatch} from '../../app/store'
 import {Redirect} from 'react-router-dom'
-import {action} from "@storybook/addon-actions";
 
 type FormValuesType = {
     email: string
