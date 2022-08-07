@@ -1,4 +1,3 @@
-import {Dispatch} from 'redux'
 import {setAppStatusAC} from '../../app/app-reducer'
 import {authAPI, FieldErrorType, LoginParamsType} from '../../api/todolists-api'
 import {handleServerAppError, handleServerNetworkError} from '../../utils/error-utils'
@@ -32,9 +31,11 @@ export const logoutTC = createAsyncThunk('auth/logout', async (param, thunkAPI) 
                 return
             } else {
                 handleServerAppError(res.data, thunkAPI.dispatch)
+                return thunkAPI.rejectWithValue({})
             }
         } catch (error) {
             handleServerNetworkError(error, thunkAPI.dispatch)
+            return thunkAPI.rejectWithValue({})
         }
     }
 )
