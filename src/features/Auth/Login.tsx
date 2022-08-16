@@ -5,6 +5,7 @@ import {useSelector} from 'react-redux'
 import {loginTC} from './auth-reducer'
 import {AppRootStateType, useAppDispatch} from '../../app/store'
 import {Redirect} from 'react-router-dom'
+import {selectIsLoggedIn} from "./selectors";
 
 type FormValuesType = {
     email: string
@@ -15,7 +16,7 @@ type FormValuesType = {
 export const Login = () => {
     const dispatch = useAppDispatch()
 
-    const isLoggedIn = useSelector<AppRootStateType, boolean>(state => state.auth.isLoggedIn);
+    const isLoggedIn = useSelector<AppRootStateType, boolean>(selectIsLoggedIn);
 
     const formik = useFormik({
         validate: (values) => {
