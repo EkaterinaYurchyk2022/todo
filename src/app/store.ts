@@ -1,11 +1,12 @@
 import {tasksReducer} from '../features/TodolistsList/tasks-reducer'
 import {todolistsReducer} from '../features/TodolistsList/todolists-reducer'
-import {combineReducers} from 'redux'
+import {ActionCreatorsMapObject, bindActionCreators, combineReducers} from 'redux'
 import thunkMiddleware from 'redux-thunk'
 import {appReducer} from './app-reducer'
 import {authReducer} from '../features/Auth/auth-reducer'
 import {configureStore} from '@reduxjs/toolkit'
-import {useDispatch} from "react-redux";
+import {useDispatch} from 'react-redux';
+import {useMemo} from 'react';
 
 // объединяя reducer-ы с помощью combineReducers,
 // мы задаём структуру нашего единственного объекта-состояния
@@ -34,3 +35,12 @@ window.store = store
 
 type AppDispatchType = typeof store.dispatch
 export const useAppDispatch = () => useDispatch<AppDispatchType>()
+
+export function useActions<T extends ActionCreatorsMapObject<any>>(actions: T) {
+    const dispatch = useAppDispatch()
+    const boundActions = useMemo(() => {
+        return bindActionCreators(actions, dispatch)
+    }, [])
+
+    return boundActions
+}
