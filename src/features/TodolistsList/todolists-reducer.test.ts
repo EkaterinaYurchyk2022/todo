@@ -1,12 +1,17 @@
 import {
     changeTodolistEntityStatus,
-    changeTodolistFilter, FilterValuesType, TodolistDomainType,
-    todolistsReducer
+    changeTodolistFilter,
+    FilterValuesType,
+    TodolistDomainType,
+    slice
 } from './todolists-reducer'
 import {v1} from 'uuid'
-import {TodolistType} from '../../api/todolists-api'
-import {RequestStatusType} from '../../app/app-reducer'
-import {addTodolistTC, changeTodolistTitleTC, fetchTodolistsTC, removeTodolistTC} from './todolists-actions';
+import {RequestStatusType} from '../Application/application-reducer'
+import {todolistsActions} from './'
+import {TodolistType} from '../../api/types'
+
+const todolistsReducer = slice.reducer
+const {addTodolistTC, changeTodolistTitleTC, fetchTodolistsTC, removeTodolistTC} = todolistsActions
 
 let todolistId1: string
 let todolistId2: string
@@ -37,7 +42,7 @@ test('correct todolist should be added', () => {
     }
 
 
-    const endState = todolistsReducer(startState, addTodolistTC.fulfilled({todolist}, 'requestId', todolist.title))
+    const endState = todolistsReducer(startState, addTodolistTC.fulfilled({todolist}, "requestId", todolist.title))
 
     expect(endState.length).toBe(3)
     expect(endState[0].title).toBe(todolist.title)
@@ -47,8 +52,8 @@ test('correct todolist should be added', () => {
 test('correct todolist should change its name', () => {
     let newTodolistTitle = 'New Todolist'
 
-    let payload = {id: todolistId2, title: newTodolistTitle};
-    const action = changeTodolistTitleTC.fulfilled(payload, 'requestId', payload)
+    let payload = {id: todolistId2, title: newTodolistTitle}
+    const action = changeTodolistTitleTC.fulfilled(payload,"requestId", payload)
 
     const endState = todolistsReducer(startState, action)
 
@@ -68,7 +73,8 @@ test('correct filter of todolist should be changed', () => {
 })
 test('todolists should be added', () => {
 
-    const action = fetchTodolistsTC.fulfilled({todolists: startState}, 'requestId')
+    let payload = {todolists: startState}
+    const action = fetchTodolistsTC.fulfilled(payload, "requestId", undefined)
 
     const endState = todolistsReducer([], action)
 
