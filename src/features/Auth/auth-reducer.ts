@@ -1,67 +1,68 @@
-import {setAppStatusAC} from '../../app/app-reducer'
-import {authAPI, FieldErrorType, LoginParamsType} from '../../api/todolists-api'
-import {handleServerAppError, handleServerNetworkError} from '../../utils/error-utils'
+import {authAPI} from '../../api/todolists-api'
+import {handleAsyncServerAppError, handleAsyncServerNetworkError} from '../../utils/error-utils'
 import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit'
-import {AxiosError} from "axios";
+import {FieldErrorType, LoginParamsType} from '../../api/types'
+import {appActions} from '../CommonActions/App'
 
-export const loginTC = createAsyncThunk<undefined, LoginParamsType, { rejectValue: { errors: Array<string>, fieldsErrors?: Array<FieldErrorType> } }>('auth/login', async (param: LoginParamsType, thunkAPI) => {
-    thunkAPI.dispatch(setAppStatusAC({status: 'loading'}))
+const {setAppStatus} = appActions
+
+export const login = createAsyncThunk<undefined, LoginParamsType,
+    { rejectValue: { errors: Array<string>, fieldsErrors?: Array<FieldErrorType> } }>('auth/login', async (param, thunkAPI) => {
+    thunkAPI.dispatch(setAppStatus({status: 'loading'}))
     try {
         const res = await authAPI.login(param)
         if (res.data.resultCode === 0) {
-            thunkAPI.dispatch(setAppStatusAC({status: 'succeeded'}))
+            thunkAPI.dispatch(setAppStatus({status: 'succeeded'}))
             return
         } else {
-            handleServerAppError(res.data, thunkAPI.dispatch)
-            return thunkAPI.rejectWithValue({errors: res.data.messages, fieldsErrors: res.data.fieldsErrors})
+            return handleAsyncServerAppError(res.data, thunkAPI)
         }
-    } catch (err) {
-        const error: AxiosError = err
-        handleServerNetworkError(error, thunkAPI.dispatch)
-        return thunkAPI.rejectWithValue({errors: [error.message], fieldsErrors: undefined})
+    } catch (error) {
+        return handleAsyncServerNetworkError(error, thunkAPI)
+    }
+})
+export const logout = createAsyncThunk('auth/logout', async (param, thunkAPI) => {
+    thunkAPI.dispatch(setAppStatus({status: 'loading'}))
+    try {
+        const res = await authAPI.logout()
+        if (res.data.resultCode === 0) {
+            thunkAPI.dispatch(setAppStatus({status: 'succeeded'}))
+            return
+        } else {
+            return handleAsyncServerAppError(res.data, thunkAPI)
+        }
+    } catch (error) {
+        return handleAsyncServerNetworkError(error, thunkAPI)
     }
 })
 
-export const logoutTC = createAsyncThunk('auth/logout', async (param, thunkAPI) => {
-        thunkAPI.dispatch(setAppStatusAC({status: 'loading'}))
-        try {
-            const res = await authAPI.logout()
-            if (res.data.resultCode === 0) {
-                thunkAPI.dispatch(setAppStatusAC({status: 'succeeded'}))
-                return
-            } else {
-                handleServerAppError(res.data, thunkAPI.dispatch)
-                return thunkAPI.rejectWithValue({})
-            }
-        } catch (error) {
-            handleServerNetworkError(error, thunkAPI.dispatch)
-            return thunkAPI.rejectWithValue({})
-        }
-    }
-)
+export const asyncActions = {
+    login,
+    logout
+}
 
-const slice = createSlice({
+export const slice = createSlice({
     name: 'auth',
     initialState: {
         isLoggedIn: false
     },
     reducers: {
-        setIsLoggedInAC(state, action: PayloadAction<{ value: boolean }>) {
+        setIsLoggedIn(state, action: PayloadAction<{ value: boolean }>) {
             state.isLoggedIn = action.payload.value
         }
     },
     extraReducers: builder => {
-        builder.addCase(loginTC.fulfilled, (state) => {
-            state.isLoggedIn = true
-        })
-        builder.addCase(logoutTC.fulfilled, (state) => {
-            state.isLoggedIn = false
-        })
+        builder
+            .addCase(login.fulfilled, (state) => {
+                state.isLoggedIn = true
+            })
+            .addCase(logout.fulfilled, (state) => {
+                state.isLoggedIn = false
+            })
     }
 })
 
 export const authReducer = slice.reducer
-export const {setIsLoggedInAC} = slice.actions
-
+export const {setIsLoggedIn} = slice.actions
 
 
