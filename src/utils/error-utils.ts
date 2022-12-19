@@ -1,4 +1,5 @@
 import {appActions} from '../features/CommonActions/App'
+import {Dispatch} from 'redux'
 import {AxiosError} from 'axios'
 import {ResponseType} from '../api/types'
 
